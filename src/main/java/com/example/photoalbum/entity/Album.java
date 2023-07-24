@@ -22,7 +22,6 @@ public class Album {
     @Column(name = "album_id", unique = true, nullable = false)
     private Long id;
 
-
     @Column(name = "album_name", unique = false, nullable = false)
     private String albumName;
 
