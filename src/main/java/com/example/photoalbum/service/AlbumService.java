@@ -1,7 +1,10 @@
 package com.example.photoalbum.service;
 
+import com.example.photoalbum.dto.AlbumDto;
 import com.example.photoalbum.entity.Album;
+import com.example.photoalbum.mapper.AlbumMapper;
 import com.example.photoalbum.repository.AlbumRepository;
+import com.example.photoalbum.repository.PhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +16,35 @@ import java.util.Optional;
 public class AlbumService {
 
     private final AlbumRepository albumRepository;
+    private final PhotoRepository photoRepository;
 
-    public void save(Album album) {
-        albumRepository.save(album);
+
+    /**
+     * 사진 저장하기
+     */
+    public AlbumDto createAlbum(AlbumDto albumDto) {
+        Album album = AlbumMapper.convertToEntity(albumDto);
+        this.albumRepository.save(album);
+        return
     }
-    public Album getAlbum(Long albumId) {
+
+    /**
+     * 앨범 아이디로 앨범 - 조회하기
+     */
+    public AlbumDto findById(Long albumId) {
         Optional<Album> res = albumRepository.findById(albumId);
         if (res.isPresent()) {
-            return res.get();
+            AlbumDto albumDto = AlbumMapper.convertToDto(res.get());
+            albumDto.setCount(photoRepository.countByAlbumId(albumId));
+            return albumDto;
         } else {
-            throw new EntityNotFoundException(String.format("앨범 아이디 %d로 조회되지 않습니다.", albumId));
+            throw new EntityNotFoundException(String.format("앨범 아이디 %d로 조회되지 않았습니다", albumId));
         }
     }
+
+
+
+
 
 
 
